@@ -64,7 +64,7 @@ public interface TaskManager {
 
     Integer getNewId();
 
-    LinkedList<Task> history();
+    List<Task> history();
 
 
 }

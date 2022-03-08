@@ -5,6 +5,7 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,74 +15,76 @@ public class Main {
         TaskManager inMemoryTaskManager = Managers.getDefault();
 
         //Тестирование
-        //Две простые задачи
-        Task task1 = new Task("Task1", "Task1-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW);
-        inMemoryTaskManager.createTask(task1);
 
-        Task task2 = new Task("Task2", "Task2-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW);
-        inMemoryTaskManager.createTask(task2);
+        //Эпик с двумя подзадачами
 
-        //Эпик с одной подзадачей
         Epic epic1 = new Epic("Epic1", "Epic1-description", inMemoryTaskManager.getNewId());
         inMemoryTaskManager.createEpic(epic1);
 
-        Subtask subtask1 = new Subtask("Subtask1", "Subtask1 description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic1);
+        Subtask subtask1 = new Subtask("Subtask1", "Subtask1-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic1);
         inMemoryTaskManager.createSubtask(subtask1);
 
-        //Эпик с двумя подзадачами
-        Epic epic2 = new Epic("Epic2", "Epic2-description", inMemoryTaskManager.getNewId());
-        inMemoryTaskManager.createEpic(epic2);
-
-        Subtask subtask2 = new Subtask("Subtask2", "Subtask2-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic2);
+        Subtask subtask2 = new Subtask("Subtask2", "Subtask2-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic1);
         inMemoryTaskManager.createSubtask(subtask2);
 
-        Subtask subtask3 = new Subtask("Subtask3", "Subtask3-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic2);
-        inMemoryTaskManager.createSubtask(subtask3);
+        //Создание задач для заполнения истории
 
-        //Вывод всех задач, эпиков и подзадач
-        printAllTasks(inMemoryTaskManager);
+        ArrayList<Task> tasksTestList = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            String name = "Task" + i;
+            String description = name + "-description";
+            tasksTestList.add(new Task(name, description, inMemoryTaskManager.getNewId(), TaskStatus.NEW));
+        }
 
-        //Обновление задачи
-        Task task1update = new Task("Task1", "Task1-description", task1.getId(), TaskStatus.IN_PROGRESS);
-        inMemoryTaskManager.updateTask(task1update);
+        for (Task task : tasksTestList) {
+            inMemoryTaskManager.createTask(task);
+        }
 
-        //Обновление подзадачи
-        Subtask subtask2update = new Subtask("Subtask2", "Subtask3-description", subtask2.getId(), TaskStatus.NEW, epic2);
-        inMemoryTaskManager.updateSubtask(subtask2update);
+        //10 просмотров
 
-        Subtask subtask3update = new Subtask("Subtask3", "Subtask3-description", subtask3.getId(), TaskStatus.DONE, epic2);
-        inMemoryTaskManager.updateSubtask(subtask3update);
-
-        //Вывод всех задач, эпиков и подзадач
-        printAllTasks(inMemoryTaskManager);
-
-        //Удаление задач по идентификатору
-        inMemoryTaskManager.deleteTaskById(task1.getId());
-        inMemoryTaskManager.deleteEpicById(epic1.getId());
-
-        //Вывод всех задач, эпиков и подзадач
-        printAllTasks(inMemoryTaskManager);
-
-        //Вывод подзадач определенного эпика
-        printSubtasksOfEpic(inMemoryTaskManager, epic2);
-
-        //Заполнение истории просмотров
-        for (int i = 0; i < 10; i++) {
-            inMemoryTaskManager.getTaskById(task2.getId());
+        for (int i = 0; i < tasksTestList.size() - 1; i++) {
+            inMemoryTaskManager.getTaskById(tasksTestList.get(i).getId());
         }
 
         //Вывод истории просмотров
+
         printHistory(inMemoryTaskManager);
 
-        System.out.println();
+        //11 просмотр
 
-        //11ый просмотр
-        inMemoryTaskManager.getEpicById(epic2.getId());
+        inMemoryTaskManager.getTaskById(tasksTestList.get(tasksTestList.size()-1).getId());
 
         //Вывод истории просмотров
+
         printHistory(inMemoryTaskManager);
 
+        //Просмотр эпика и подзадач
 
+        inMemoryTaskManager.getEpicById(epic1.getId());
+        inMemoryTaskManager.getSubtaskById(subtask1.getId());
+        inMemoryTaskManager.getSubtaskById(subtask2.getId());
+
+        //Вывод истории просмотров
+
+        printHistory(inMemoryTaskManager);
+
+        //Повторный просмотр задачи
+
+        inMemoryTaskManager.getTaskById(tasksTestList.get(0).getId());
+
+        //Вывод истории просмотров
+
+        printHistory(inMemoryTaskManager);
+
+        //Удаление эпика
+
+        inMemoryTaskManager.deleteEpicById(epic1.getId());
+
+        //inMemoryTaskManager.deleteSubtaskById(subtask1.getId());
+
+        //Вывод истории просмотров
+
+        printHistory(inMemoryTaskManager);
 
     }
 
@@ -109,11 +112,11 @@ public class Main {
         }
     }
 
-    //?
     static void printHistory(TaskManager inMemoryTaskManager) {
-        LinkedList<Task> history = inMemoryTaskManager.history();
+        List<Task> history = inMemoryTaskManager.history();
         for (Task task : history) {
             System.out.println(task.getName());
         }
+        System.out.println();
     }
 }
