@@ -10,7 +10,7 @@ public class Epic extends Task {
         this.name = name;
         this.description = description;
         this.id = id;
-        this.status = "NEW";
+        this.status = TaskStatus.NEW;
     }
 
     public void addSubtask(Subtask subtask) {
@@ -21,7 +21,7 @@ public class Epic extends Task {
         return subtasks;
     }
 
-    public void changeEpicStatus(String status) {
+    public void changeEpicStatus(TaskStatus status) {
         this.status = status;
     }
     public void updateSubtask(Subtask subtaskToUpdate) {
