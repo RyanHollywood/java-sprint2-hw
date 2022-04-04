@@ -1,3 +1,5 @@
+import managers.FileBackedTasksManager;
+import managers.InMemoryTasksManager;
 import managers.Managers;
 import managers.TaskManager;
 import tasks.Epic;
@@ -5,87 +7,51 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        FileBackedTasksManager tasksManager = FileBackedTasksManager.loadFromFile("history.txt");
+        printHistory(tasksManager);
 
-        TaskManager inMemoryTaskManager = Managers.getDefault();
+        /*
+        Тестирование старого менеджера
 
-        //Тестирование
+        TaskManager tasksManager = Managers.getDefault();
 
         //Эпик с двумя подзадачами
 
-        Epic epic1 = new Epic("Epic1", "Epic1-description", inMemoryTaskManager.getNewId());
-        inMemoryTaskManager.createEpic(epic1);
+        Epic epic1 = new Epic(tasksManager.getNewId(),"Epic1", "Description epic1");
+        tasksManager.createEpic(epic1);
 
-        Subtask subtask1 = new Subtask("Subtask1", "Subtask1-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic1);
-        inMemoryTaskManager.createSubtask(subtask1);
+        Subtask subtask1 = new Subtask(tasksManager.getNewId(), "Subtask1", TaskStatus.NEW,
+                "Description subtask1",epic1.getId());
+        tasksManager.createSubtask(subtask1);
 
-        Subtask subtask2 = new Subtask("Subtask2", "Subtask2-description", inMemoryTaskManager.getNewId(), TaskStatus.NEW, epic1);
-        inMemoryTaskManager.createSubtask(subtask2);
+        Subtask subtask2 = new Subtask(tasksManager.getNewId(), "Subtask2", TaskStatus.DONE,
+                "Description subtask2",epic1.getId());
+        tasksManager.createSubtask(subtask2);
 
-        //Создание задач для заполнения истории
+        //Две задачи
 
-        ArrayList<Task> tasksTestList = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
-            String name = "Task" + i;
-            String description = name + "-description";
-            tasksTestList.add(new Task(name, description, inMemoryTaskManager.getNewId(), TaskStatus.NEW));
-        }
+        Task task1 = new Task(tasksManager.getNewId(),"Task1", TaskStatus.NEW,"Description task1");
+        tasksManager.createTask(task1);
+        Task task2 = new Task(tasksManager.getNewId(),"Task2", TaskStatus.NEW,"Description task2");
+        tasksManager.createTask(task2);
 
-        for (Task task : tasksTestList) {
-            inMemoryTaskManager.createTask(task);
-        }
+        //Просмотр задач
 
-        //10 просмотров
+        tasksManager.getEpicById(epic1.getId());
+        tasksManager.getSubtaskById(subtask1.getId());
+        tasksManager.getSubtaskById(subtask2.getId());
+        tasksManager.getTaskById(task1.getId());
+        tasksManager.getTaskById(task2.getId());
 
-        for (int i = 0; i < tasksTestList.size() - 1; i++) {
-            inMemoryTaskManager.getTaskById(tasksTestList.get(i).getId());
-        }
-
-        //Вывод истории просмотров
-
-        printHistory(inMemoryTaskManager);
-
-        //11 просмотр
-
-        inMemoryTaskManager.getTaskById(tasksTestList.get(tasksTestList.size()-1).getId());
-
-        //Вывод истории просмотров
-
-        printHistory(inMemoryTaskManager);
-
-        //Просмотр эпика и подзадач
-
-        inMemoryTaskManager.getEpicById(epic1.getId());
-        inMemoryTaskManager.getSubtaskById(subtask1.getId());
-        inMemoryTaskManager.getSubtaskById(subtask2.getId());
-
-        //Вывод истории просмотров
-
-        printHistory(inMemoryTaskManager);
-
-        //Повторный просмотр задачи
-
-        inMemoryTaskManager.getTaskById(tasksTestList.get(0).getId());
-
-        //Вывод истории просмотров
-
-        printHistory(inMemoryTaskManager);
-
-        //Удаление эпика
-
-        inMemoryTaskManager.deleteEpicById(epic1.getId());
-
-        //inMemoryTaskManager.deleteSubtaskById(subtask1.getId());
-
-        //Вывод истории просмотров
-
-        printHistory(inMemoryTaskManager);
-
+        printHistory(tasksManager);
+         */
     }
 
     static void printAllTasks(TaskManager taskManager) {
@@ -113,10 +79,11 @@ public class Main {
     }
 
     static void printHistory(TaskManager inMemoryTaskManager) {
-        List<Task> history = inMemoryTaskManager.history();
-        for (Task task : history) {
-            System.out.println(task.getName());
+        List<Integer> history = inMemoryTaskManager.history();
+        String[] historyArray = new String[history.size()];
+        for (int i = 0; i < history.size(); i++) {
+            historyArray[i] = history.get(i).toString();
         }
-        System.out.println();
+        System.out.println(String.join(",", historyArray));
     }
 }

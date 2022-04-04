@@ -1,17 +1,17 @@
 package managers;
 
-public class Node<Task> {
-    public Task data;
-    public Node<Task> next;
-    public Node<Task> prev;
+public class Node<Integer> {
+    public Integer data;
+    public Node<Integer> next;
+    public Node<Integer> prev;
 
-    public Node(Node<Task> prev, Task data, Node<Task> next) {
+    public Node(Node<Integer> prev, Integer data, Node<Integer> next) {
         this.data = data;
         this.next = next;
         this.prev = prev;
     }
 
-    public Task getData() {
+    public Integer getData() {
         return data;
     }
 }

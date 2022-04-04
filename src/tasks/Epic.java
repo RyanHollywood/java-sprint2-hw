@@ -6,11 +6,12 @@ public class Epic extends Task {
 
     private ArrayList<Subtask> subtasks = new ArrayList<>();
 
-    public Epic(String name, String description, Integer id) {
+    public Epic(Integer id, String name, String description) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = TaskStatus.NEW;
+        type = TaskType.EPIC;
     }
 
     public void addSubtask(Subtask subtask) {
@@ -30,5 +31,10 @@ public class Epic extends Task {
                 subtasks.set(i, subtaskToUpdate);
             }
         }
+    }
+
+    public static Epic fromString(String epicString) {
+        String[] epicAttributes = epicString.split(",");
+        return new Epic(Integer.parseInt(epicAttributes[0]), epicAttributes[2], epicAttributes[4]);
     }
 }
